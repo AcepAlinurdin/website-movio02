@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movio Studio - Professional Creative Partner</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FAFAFA; 
+            color: #1E3A8A; /* Corporate Blue */
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #F97316;
+            color: white;
+        }
+
+        /* Background Patterns for "Structured" feel */
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .bg-grid-pattern-dark {
+            background-image: linear-gradient(to right, rgba(30,58,138,0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(30,58,138,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Fade Up Animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+        }
+
+        /* Bold Typography Utilities */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1.5px #FFFFFF;
+        }
+        .text-outline-dark {
+            color: transparent;
+            -webkit-text-stroke: 1.5px #1E3A8A;
+        }
+        
+        .label-tegas {
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: 800;
+            font-size: 0.7rem;
+        }
+
+        /* Custom Cursor Hide on Desktop */
+        @media (min-width: 768px) {
+            body, a, button, input, textarea, .cursor-pointer { 
+                cursor: none !important; 
+            }
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen selection:bg-[#F97316] selection:text-white">
+
+    <!-- Interactive Custom Cursor -->
+    <div id="custom-cursor" class="fixed top-0 left-0 pointer-events-none z-[100] transition-all duration-300 ease-out hidden md:flex items-center justify-center mix-blend-difference" style="width: 16px; height: 16px; margin-left: -8px; margin-top: -8px;">
+        <div id="cursor-inner" class="w-full h-full rounded-full border-[2px] border-[#F97316] bg-[#F97316] transition-all duration-500 scale-100"></div>
+    </div>
+
+    <!-- Navbar Global (Dark/Light adaptive via JS) -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 py-8 border-b border-transparent">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+            <div id="nav-logo" class="font-black text-3xl tracking-tighter text-white cursor-pointer nav-trigger uppercase" data-target="home">
+                Movio<span class="text-[#F97316]">.</span>
+            </div>
+            
+            <!-- Desktop Links -->
+            <div id="nav-links-container" class="hidden lg:flex items-center gap-10 text-[13px] font-bold tracking-[0.2em] uppercase text-white/70">
+                <button data-target="home" class="nav-link text-white transition-colors cursor-pointer hover:text-[#F97316]">Home</button>
+                <button data-target="about" class="nav-link transition-colors cursor-pointer hover:text-[#F97316]">About</button>
+                <button data-target="solusi" class="nav-link transition-colors cursor-pointer hover:text-[#F97316]">Solusi</button>
+                <button data-target="servis" class="nav-link transition-colors cursor-pointer hover:text-[#F97316]">Servis</button>
+                <button data-target="portfolio" class="nav-link transition-colors cursor-pointer hover:text-[#F97316]">Portfolio</button>
+            </div>
+            
+            <div class="hidden lg:block">
+                <button data-target="contact" class="nav-trigger bg-[#F97316] text-white px-8 py-3.5 rounded-full text-[13px] tracking-wider font-bold uppercase hover:bg-white hover:text-[#1E3A8A] transition-all duration-300 flex items-center gap-2 group cursor-pointer">
+                    Minta Quote
+                    <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="mobile-menu-btn" class="lg:hidden text-white cursor-pointer">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0A192F] z-40 transition-transform duration-700 ease-in-out -translate-y-full flex flex-col justify-center px-8 border-b-8 border-[#F97316]">
+        <div class="flex flex-col gap-8 text-4xl font-black text-white tracking-tighter uppercase">
+            <button data-target="home" class="nav-link-mobile text-left text-[#F97316] transition-colors">Home</button>
+            <button data-target="about" class="nav-link-mobile text-left text-white/50 transition-colors">About Us</button>
+            <button data-target="solusi" class="nav-link-mobile text-left text-white/50 transition-colors">Solusi</button>
+            <button data-target="servis" class="nav-link-mobile text-left text-white/50 transition-colors">Servis</button>
+            <button data-target="portfolio" class="nav-link-mobile text-left text-white/50 transition-colors">Portfolio</button>
+            <button data-target="contact" class="nav-trigger text-left text-[#F97316] mt-8 text-2xl border-t border-white/10 pt-8">Minta Quote</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow">
+
+        <!-- ==============================================
+             PAGE 1: HOME (MEMIKAT CLIENT - TEGAS & BOLD)
+        =============================================== -->
+        <div id="page-home" class="page-section block">
+            <!-- HERO: Dark Navy, Grid, Bold -->
+            <section class="pt-40 pb-24 md:pt-64 md:pb-40 px-6 md:px-12 relative overflow-hidden flex items-center min-h-screen bg-[#0A192F] text-white">
+                <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                <!-- Glowing Orange Accent -->
+                <div class="absolute top-1/2 right-0 w-[600px] h-[600px] bg-[#F97316]/20 rounded-full mix-blend-screen filter blur-[100px] translate-x-1/3 -translate-y-1/2"></div>
+                <!-- Glowing Blue Accent -->
+                <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#1E3A8A]/40 rounded-full mix-blend-screen filter blur-[120px] -translate-x-1/3 translate-y-1/3"></div>
+                
+                <div class="max-w-7xl mx-auto w-full relative z-10">
+                    <div class="fade-up max-w-5xl">
+                        <div class="inline-flex items-center gap-4 px-5 py-2.5 rounded-full bg-[#1E3A8A]/30 border border-blue-400/20 text-[11px] font-bold tracking-[0.2em] uppercase text-white mb-12 backdrop-blur-md">
+                            <span class="w-2 h-2 rounded-full bg-[#F97316] animate-pulse"></span>
+                            Professional Creative Partner
+                        </div>
+                        
+                        <h1 class="text-[4rem] md:text-[7rem] lg:text-[8.5rem] font-black leading-[0.9] tracking-tighter mb-10 uppercase">
+                            Hybrid AI & <br> Video <span class="text-outline block md:inline">Solutions</span>
+                        </h1>
+                        
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-10 border-t border-blue-400/20 pt-10 mt-16">
+                            <p class="text-[1.125rem] md:text-[1.25rem] text-blue-100/70 max-w-xl font-light leading-relaxed">
+                                Professional video and visual design production powered by Hybrid AI system for the efficiency you need and the quality standards you trust.
+                            </p>
+                            
+                            <div class="flex items-center gap-6">
+                                <button data-target="portfolio" class="w-24 h-24 md:w-32 md:h-32 rounded-full border border-blue-400/30 flex items-center justify-center hover:bg-[#F97316] hover:border-[#F97316] transition-all duration-500 group cursor-pointer relative overflow-hidden bg-[#1E3A8A]/10">
+                                    <div class="absolute inset-0 bg-white scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full origin-center"></div>
+                                    <span class="relative z-10 text-[10px] font-bold uppercase tracking-widest group-hover:text-[#1E3A8A] flex flex-col items-center gap-2">
+                                        <i data-lucide="play" class="w-6 h-6 fill-current"></i>
+                                        Showreel
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CLIENTS LOGOS -->
+            <section class="py-16 bg-[#0A192F] border-y border-blue-400/10 overflow-hidden relative z-20">
+                <div class="max-w-7xl mx-auto px-6 mb-8">
+                    <p class="label-tegas text-center text-blue-200/30">Dipercaya oleh Eksekutif Korporat</p>
+                </div>
+                <div class="flex whitespace-nowrap opacity-50 hover:opacity-100 transition-all duration-700">
+                    <div class="animate-marquee flex items-center gap-24 md:gap-40 text-3xl md:text-5xl font-black tracking-tighter text-white cursor-pointer uppercase">
+                        <span>ASTRA</span>
+                        <span class="font-serif italic font-medium tracking-normal">Nestlé</span>
+                        <span>GoTo</span>
+                        <span>CIMB NIAGA</span>
+                        <span class="text-transparent" style="-webkit-text-stroke: 2px white;">BCA</span>
+                        <span>ASTRA</span>
+                        <span class="font-serif italic font-medium tracking-normal">Nestlé</span>
+                        <span>GoTo</span>
+                        <span>CIMB NIAGA</span>
+                        <span class="text-transparent" style="-webkit-text-stroke: 2px white;">BCA</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VALUE PROPOSITION HIGHLIGHT (Tegas & Asimetris) -->
+            <section class="py-32 bg-white text-[#1E3A8A] relative">
+                <div class="absolute inset-0 bg-grid-pattern-dark opacity-10"></div>
+                <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 fade-up">
+                    <div class="flex flex-col md:flex-row justify-between items-end gap-10 mb-20 border-b-8 border-[#1E3A8A] pb-10">
+                        <h2 class="text-4xl md:text-[5rem] font-black tracking-tighter leading-[0.9] uppercase max-w-3xl">
+                            Kepastian, <br> Bukan Ide <span class="text-[#F97316]">Liar.</span>
+                        </h2>
+                        <p class="text-slate-600 max-w-sm font-medium leading-relaxed pb-2">
+                            Kami menjual struktur kerja yang jelas, proses yang terukur, dan hasil yang dapat dipertanggungjawabkan.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Box 1 -->
+                        <div class="group bg-[#F0F4F8] p-10 rounded-none border-l-4 border-transparent hover:border-[#F97316] hover:bg-[#1E3A8A] hover:text-white transition-all duration-300 cursor-pointer">
+                            <i data-lucide="shield-check" class="w-10 h-10 text-[#F97316] mb-8 group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-2xl uppercase tracking-tight mb-4">Structured<br>Workflow</h4>
+                            <p class="text-sm font-medium opacity-70 group-hover:opacity-90">Sistem kerja profesional yang rapi dan terstruktur dari awal hingga akhir.</p>
+                        </div>
+                        <!-- Box 2 -->
+                        <div class="group bg-[#F0F4F8] p-10 rounded-none border-l-4 border-transparent hover:border-[#F97316] hover:bg-[#1E3A8A] hover:text-white transition-all duration-300 cursor-pointer">
+                            <i data-lucide="clock" class="w-10 h-10 text-[#F97316] mb-8 group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-2xl uppercase tracking-tight mb-4">Timeline<br>Certainty</h4>
+                            <p class="text-sm font-medium opacity-70 group-hover:opacity-90">Kepastian eksekusi dengan deliverables dan target waktu yang jelas.</p>
+                        </div>
+                        <!-- Box 3 -->
+                        <div class="group bg-[#F0F4F8] p-10 rounded-none border-l-4 border-transparent hover:border-[#F97316] hover:bg-[#1E3A8A] hover:text-white transition-all duration-300 cursor-pointer">
+                            <i data-lucide="sparkles" class="w-10 h-10 text-[#F97316] mb-8 group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-2xl uppercase tracking-tight mb-4">Hybrid AI<br>Efficiency</h4>
+                            <p class="text-sm font-medium opacity-70 group-hover:opacity-90">Integrasi teknologi AI untuk kecepatan produksi tanpa memotong kualitas.</p>
+                        </div>
+                        <!-- Box 4 -->
+                        <div class="group bg-[#F0F4F8] p-10 rounded-none border-l-4 border-transparent hover:border-[#F97316] hover:bg-[#1E3A8A] hover:text-white transition-all duration-300 cursor-pointer">
+                            <i data-lucide="check-circle-2" class="w-10 h-10 text-[#F97316] mb-8 group-hover:scale-110 transition-transform"></i>
+                            <h4 class="font-black text-2xl uppercase tracking-tight mb-4">Quality<br>Control</h4>
+                            <p class="text-sm font-medium opacity-70 group-hover:opacity-90">Pengecekan kualitas ketat berlapis sesuai standar tinggi korporasi BUMN.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TESTIMONIAL HIGHLIGHT (Editorial Style) -->
+            <section class="py-32 px-6 md:px-12 bg-[#F0F4F8] border-t border-blue-100">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-col lg:flex-row items-center gap-16 fade-up">
+                        <div class="lg:w-1/3 w-full">
+                            <h2 class="text-[5rem] font-black leading-none text-[#1E3A8A] mb-6">"PEACE<br>OF MIND"</h2>
+                            <div class="w-20 h-2 bg-[#F97316] mb-8"></div>
+                            <p class="font-bold text-xl text-[#1E3A8A]">Budi Santoso</p>
+                            <p class="text-[#1E3A8A]/50 font-semibold uppercase tracking-widest text-xs">Marketing Director, XYZ Corp</p>
+                        </div>
+                        <div class="lg:w-2/3 w-full bg-white p-12 md:p-20 shadow-2xl relative border border-blue-50">
+                            <i data-lucide="quote" class="absolute top-10 left-10 w-24 h-24 text-[#F0F4F8] fill-current"></i>
+                            <div class="relative z-10">
+                                <div class="flex gap-2 text-[#F97316] mb-10">
+                                    <i data-lucide="star" class="w-6 h-6 fill-current"></i>
+                                    <i data-lucide="star" class="w-6 h-6 fill-current"></i>
+                                    <i data-lucide="star" class="w-6 h-6 fill-current"></i>
+                                    <i data-lucide="star" class="w-6 h-6 fill-current"></i>
+                                    <i data-lucide="star" class="w-6 h-6 fill-current"></i>
+                                </div>
+                                <p class="text-2xl md:text-4xl font-bold leading-snug tracking-tight text-[#1E3A8A]">
+                                    "Movio adalah mitra yang bisa diandalkan. Mereka menyajikan peace of mind dalam setiap tahap project dan timeline mereka selalu terukur. Kami sangat terbantu."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ==============================================
+             PAGE 2: ABOUT US
+        =============================================== -->
+        <div id="page-about" class="page-section hidden pt-40 md:pt-48 pb-24 px-6 md:px-12 bg-[#0A192F] text-white min-h-screen">
+            <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+            <div class="max-w-7xl mx-auto relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 mb-32">
+                    <div class="lg:col-span-8 fade-up">
+                        <span class="label-tegas text-[#F97316] mb-8 block">Tentang Movio Studio</span>
+                        <h1 class="text-5xl md:text-[5rem] lg:text-[6.5rem] font-black leading-[0.9] tracking-tighter uppercase mb-10">
+                            Sistem <br><span class="text-outline">Profesional.</span>
+                        </h1>
+                        <div class="space-y-6 max-w-2xl text-[1.25rem] font-light leading-relaxed text-blue-100/70 border-l-2 border-[#F97316] pl-8">
+                            <p>
+                                Movio Studio adalah Professional business service di bidang kreatif & digital yang menyediakan jasa produksi video dan desain untuk perusahaan menengah dan besar (korporasi), dengan pendekatan produksi konvensional maupun Hybrid AI Production.
+                            </p>
+                            <p>
+                                Kami membantu perusahaan mengubah pesan bisnis yang kompleks menjadi komunikasi visual yang jelas, sistematis, dan berdampak.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-up delay-200">
+                    <div class="bg-[#1E3A8A]/30 border border-blue-400/20 p-12 hover:bg-[#1E3A8A]/50 transition-colors cursor-pointer group">
+                        <div class="flex items-center gap-6 mb-8">
+                            <h3 class="font-black text-white text-3xl uppercase tracking-tight">01. Konvensional</h3>
+                        </div>
+                        <p class="text-blue-100/70 font-medium leading-relaxed">Metode produksi dengan sistem kerja terstruktur, melibatkan tim kreatif, produksi, dan post-production yang berpengalaman untuk menghasilkan video company profile, shooting perusahaan, hingga animasi.</p>
+                    </div>
+                    
+                    <div class="bg-[#F97316] p-12 text-[#1E3A8A] hover:bg-[#EA580C] hover:text-white transition-colors cursor-pointer group">
+                        <div class="flex items-center gap-6 mb-8">
+                            <h3 class="font-black text-3xl uppercase tracking-tight">02. Hybrid AI</h3>
+                        </div>
+                        <p class="font-semibold leading-relaxed opacity-90">Pendekatan yang menggabungkan sistem kerja profesional Movio dengan pemanfaatan teknologi AI untuk proses lebih cepat, adaptif, dan biaya efisien tanpa mengorbankan kualitas BUMN.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==============================================
+             PAGE 3: SOLUSI (BENTO GRID - BOLD LAYOUT)
+        =============================================== -->
+        <div id="page-solusi" class="page-section hidden pt-40 md:pt-48 pb-32 px-6 md:px-12 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-20 fade-up border-b-8 border-[#1E3A8A] pb-10">
+                    <span class="label-tegas text-[#F97316] mb-6 block">Kategori Solusi</span>
+                    <h1 class="text-5xl md:text-[5rem] font-black text-[#1E3A8A] tracking-tighter leading-[0.9] uppercase max-w-4xl">
+                        Tantangan <span class="text-outline-dark">Komunikasi</span> Korporasi.
+                    </h1>
+                </div>
+
+                <!-- BENTO GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[400px]">
+                    <!-- Solusi Promosi (Span 2 cols on Desktop) -->
+                    <div class="lg:col-span-2 bg-[#0A192F] text-white p-10 md:p-14 rounded-none hover:shadow-2xl transition-all duration-500 fade-up flex flex-col justify-between group relative overflow-hidden cursor-pointer border border-blue-900">
+                        <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                        <i data-lucide="megaphone" class="w-12 h-12 text-[#F97316] relative z-10 group-hover:scale-110 transition-transform"></i>
+                        <div class="relative z-10">
+                            <h3 class="text-4xl font-black uppercase mb-4 tracking-tight">Solusi Promosi</h3>
+                            <p class="text-blue-100/60 font-medium mb-8 max-w-md">Menarik perhatian audiens dan meningkatkan konversi melalui visual pemasaran yang memikat untuk divisi marketing.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-4 py-2 bg-[#1E3A8A]/50 backdrop-blur font-bold text-xs uppercase tracking-widest border border-blue-400/30 text-white">Video Animasi</span>
+                                <span class="px-4 py-2 bg-[#1E3A8A]/50 backdrop-blur font-bold text-xs uppercase tracking-widest border border-blue-400/30 text-white">Video Syuting</span>
+                                <span class="px-4 py-2 bg-[#1E3A8A]/50 backdrop-blur font-bold text-xs uppercase tracking-widest border border-blue-400/30 text-white">Konten Branding</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solusi Media Pembelajaran -->
+                    <div class="bg-[#F97316] text-[#0A192F] p-10 md:p-12 rounded-none hover:shadow-2xl transition-all duration-500 fade-up delay-100 flex flex-col justify-between group cursor-pointer border border-orange-500">
+                        <i data-lucide="graduation-cap" class="w-12 h-12 group-hover:scale-110 transition-transform"></i>
+                        <div>
+                            <h3 class="text-3xl font-black uppercase mb-4 tracking-tight">Media Pembelajaran</h3>
+                            <p class="font-semibold opacity-90 mb-8 text-sm">Mendukung tim Human Capital (HC) men-deliver materi training yang interaktif dan mudah diserap.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-[#0A192F] text-white font-bold text-[10px] uppercase tracking-widest">E-Learning / SCORM</span>
+                                <span class="px-3 py-1.5 bg-[#0A192F] text-white font-bold text-[10px] uppercase tracking-widest">Modul Interaktif</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solusi Internal / Employer Branding -->
+                    <div class="lg:col-span-3 bg-[#F0F4F8] text-[#1E3A8A] p-10 md:p-14 rounded-none hover:shadow-2xl transition-all duration-500 fade-up flex flex-col md:flex-row justify-between items-start md:items-end group cursor-pointer border border-blue-100">
+                        <div class="max-w-2xl">
+                            <i data-lucide="users" class="w-12 h-12 text-[#F97316] mb-8 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="text-4xl font-black uppercase mb-4 tracking-tight">Internal / Employer Branding</h3>
+                            <p class="font-medium text-slate-600 mb-8 md:mb-0">Membangun citra positif perusahaan untuk komunikasi korporasi internal tim, jajaran eksekutif, maupun talenta baru.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-3 justify-end">
+                            <span class="px-4 py-2 bg-white font-bold text-xs uppercase tracking-widest border border-blue-200">Company Profile</span>
+                            <span class="px-4 py-2 bg-white font-bold text-xs uppercase tracking-widest border border-blue-200">Training Video</span>
+                            <span class="px-4 py-2 bg-white font-bold text-xs uppercase tracking-widest border border-blue-200">Internal Campaign</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==============================================
+             PAGE 4: SERVIS (DETAIL LAYANAN)
+        =============================================== -->
+        <div id="page-servis" class="page-section hidden pt-40 md:pt-48 pb-24 px-6 md:px-12 bg-[#F0F4F8]">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-24 fade-up border-b-8 border-[#1E3A8A] pb-10">
+                    <span class="label-tegas text-[#F97316] mb-6 block">Layanan Teknis Kami</span>
+                    <h1 class="text-5xl md:text-[5rem] font-black text-[#1E3A8A] tracking-tighter leading-[0.9] uppercase">
+                        End-to-End <br> <span class="text-outline-dark">Production.</span>
+                    </h1>
+                </div>
+
+                <div class="flex flex-col gap-10">
+                    <!-- Service 1 -->
+                    <div class="bg-white p-10 md:p-16 border border-blue-100 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center fade-up hover:border-[#F97316] transition-colors cursor-pointer group">
+                        <div class="lg:col-span-6">
+                            <h2 class="text-[#1E3A8A]/5 font-black text-[6rem] leading-none absolute -mt-16 -ml-4 z-0 group-hover:text-[#F97316]/10 transition-colors">01</h2>
+                            <div class="relative z-10">
+                                <span class="text-[#F97316] font-bold tracking-widest uppercase text-xs mb-4 block">L&D Department</span>
+                                <h3 class="text-4xl font-black text-[#1E3A8A] tracking-tight mb-6 uppercase">Pembuatan E-Learning</h3>
+                                <p class="text-slate-600 font-medium mb-8">Pembuatan modul pembelajaran korporasi standar SCORM 1.2/2004. Mengintegrasikan materi membosankan menjadi interaktif, kuis, dan gamifikasi.</p>
+                                <button data-target="contact" class="nav-trigger font-bold text-[#F97316] flex items-center gap-2 uppercase tracking-widest text-sm hover:text-[#1E3A8A] transition-colors">
+                                    Konsultasi <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-6 relative">
+                            <div class="aspect-video bg-[#0A192F] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700">
+                            </div>
+                            <div class="absolute bottom-4 left-4 bg-white text-[#1E3A8A] px-4 py-2 font-bold text-[10px] uppercase tracking-widest border border-blue-100">Portfolio: SCORM Induction</div>
+                        </div>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="bg-[#1E3A8A] text-white p-10 md:p-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center fade-up hover:border-[#F97316] transition-colors cursor-pointer group shadow-2xl shadow-blue-900/20">
+                        <div class="lg:col-span-6 order-2 lg:order-1 relative">
+                            <div class="aspect-video bg-white/10 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700">
+                            </div>
+                            <div class="absolute bottom-4 left-4 bg-[#F97316] text-white px-4 py-2 font-bold text-[10px] uppercase tracking-widest">Portfolio: Explainer Animasi</div>
+                        </div>
+                        <div class="lg:col-span-6 order-1 lg:order-2">
+                            <h2 class="text-white/5 font-black text-[6rem] leading-none absolute -mt-16 -ml-4 z-0 group-hover:text-[#F97316]/10 transition-colors">02</h2>
+                            <div class="relative z-10">
+                                <span class="text-[#F97316] font-bold tracking-widest uppercase text-xs mb-4 block">Creative Promotion</span>
+                                <h3 class="text-4xl font-black tracking-tight mb-6 uppercase">Video Animasi Explainer</h3>
+                                <p class="text-blue-100/80 font-medium mb-8">Solusi terbaik menjelaskan cara kerja produk, fitur aplikasi, atau SOP. Memproduksi Explainer 2D, Infografis Bergerak, hingga Motion Graphics.</p>
+                                <button data-target="contact" class="nav-trigger font-bold text-[#F97316] flex items-center gap-2 uppercase tracking-widest text-sm hover:text-white transition-colors">
+                                    Konsultasi <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="bg-white p-10 md:p-16 border border-blue-100 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center fade-up hover:border-[#F97316] transition-colors cursor-pointer group">
+                        <div class="lg:col-span-6">
+                            <h2 class="text-[#1E3A8A]/5 font-black text-[6rem] leading-none absolute -mt-16 -ml-4 z-0 group-hover:text-[#F97316]/10 transition-colors">03</h2>
+                            <div class="relative z-10">
+                                <span class="text-[#F97316] font-bold tracking-widest uppercase text-xs mb-4 block">Corporate Production</span>
+                                <h3 class="text-4xl font-black text-[#1E3A8A] tracking-tight mb-6 uppercase">Video Company Profile & Syuting</h3>
+                                <p class="text-slate-600 font-medium mb-8">Layanan on-location shoot kru profesional. Dari penyutradaraan, editing cinematic, color grading, hingga sound mix untuk Iklan & Dokumentasi BUMN.</p>
+                                <button data-target="contact" class="nav-trigger font-bold text-[#F97316] flex items-center gap-2 uppercase tracking-widest text-sm hover:text-[#1E3A8A] transition-colors">
+                                    Konsultasi <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-6 relative">
+                            <div class="aspect-video bg-[#0A192F] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700">
+                            </div>
+                            <div class="absolute bottom-4 left-4 bg-white text-[#1E3A8A] px-4 py-2 font-bold text-[10px] uppercase tracking-widest border border-blue-100">Portfolio: Industri Nasional</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==============================================
+             PAGE 5: PORTFOLIO (TETAP SAMA KERENNYA)
+        =============================================== -->
+        <div id="page-portfolio" class="page-section hidden">
+            <!-- INTERACTIVE PORTFOLIO SECTION -->
+            <section id="portfolio-anim-section" class="relative bg-[#0A192F] h-[300vh]">
+                <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                <div class="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
+                    
+                    <!-- POSISI TEKS DINAIKKAN & Z-INDEX DITINGGIKAN AGAR TIDAK KETUTUPAN -->
+                    <div id="portfolio-title" class="absolute top-[8vh] md:top-[10vh] left-0 w-full flex flex-col items-center pointer-events-none z-30 transition-transform will-change-transform">
+                        <span class="label-tegas text-[#F97316] mb-4 md:mb-6">Portfolio Eksklusif</span>
+                        <h2 class="text-[4.5rem] md:text-[7rem] lg:text-[8.5rem] font-black text-white tracking-tighter text-center leading-none uppercase drop-shadow-2xl">
+                            Maha<span class="text-outline">karya.</span>
+                        </h2>
+                        <div class="mt-6 md:mt-8 flex flex-col items-center">
+                            <div class="w-1 h-12 bg-gradient-to-b from-[#F97316] to-transparent mb-4 animate-pulse"></div>
+                            <p class="text-blue-200/50 font-bold tracking-[0.3em] uppercase text-xs">Scroll Perlahan</p>
+                        </div>
+                    </div>
+
+                    <!-- Container Kartu -->
+                    <div class="absolute inset-0 pointer-events-none z-10">
+                        <div class="portfolio-card absolute top-1/2 left-1/2 w-[85vw] md:w-[35vw] max-w-lg aspect-[4/5] md:aspect-[4/3] rounded-none bg-[#1E3A8A] shadow-2xl border-4 border-white overflow-hidden cursor-pointer pointer-events-auto group will-change-transform" style="z-index: 5;">
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.7] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0" />
+                            <div class="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-[#0A192F] to-transparent">
+                                <h4 class="text-2xl font-black text-white tracking-tight uppercase mb-1">Video Animasi Explainer</h4>
+                                <p class="text-[#F97316] font-bold tracking-widest text-xs uppercase">Startup Teknologi</p>
+                            </div>
+                        </div>
+
+                        <div class="portfolio-card absolute top-1/2 left-1/2 w-[85vw] md:w-[35vw] max-w-lg aspect-[4/5] md:aspect-[4/3] rounded-none bg-[#1E3A8A] shadow-2xl border-4 border-[#F97316] overflow-hidden cursor-pointer pointer-events-auto group will-change-transform" style="z-index: 10;">
+                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.7] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0" />
+                            <div class="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-[#0A192F] to-transparent">
+                                <h4 class="text-2xl font-black text-white tracking-tight uppercase mb-1">Company Profile Video</h4>
+                                <p class="text-[#F97316] font-bold tracking-widest text-xs uppercase">PT Industri Nasional</p>
+                            </div>
+                        </div>
+
+                        <div class="portfolio-card absolute top-1/2 left-1/2 w-[85vw] md:w-[35vw] max-w-lg aspect-[4/5] md:aspect-[4/3] rounded-none bg-[#1E3A8A] shadow-2xl border-4 border-white overflow-hidden cursor-pointer pointer-events-auto group will-change-transform" style="z-index: 5;">
+                            <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.7] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0" />
+                            <div class="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-[#0A192F] to-transparent">
+                                <h4 class="text-2xl font-black text-white tracking-tight uppercase mb-1">SCORM Module</h4>
+                                <p class="text-[#F97316] font-bold tracking-widest text-xs uppercase">BUMN Academy</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="portfolio-btn" class="absolute bottom-10 md:bottom-16 w-full flex flex-col items-center justify-center z-20 opacity-0 pointer-events-none will-change-transform">
+                        <button onclick="document.getElementById('portfolio-grid').scrollIntoView({behavior: 'smooth'})" class="px-10 py-5 bg-[#F97316] text-[#0A192F] font-black tracking-widest uppercase text-sm cursor-pointer hover:bg-white transition-colors pointer-events-auto flex items-center gap-4">
+                            Jelajahi Grid Arsip
+                            <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRID PORTFOLIO STATIS -->
+            <section id="portfolio-grid" class="bg-white pt-32 pb-40 px-6 md:px-12 relative z-20 border-t border-blue-100">
+                <div class="max-w-7xl mx-auto">
+                    <div class="mb-20 fade-up border-b-8 border-[#1E3A8A] pb-10">
+                        <h3 class="text-[4rem] font-black text-[#1E3A8A] tracking-tighter uppercase leading-[0.9]">Arsip <br><span class="text-outline-dark">Karya.</span></h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-16">
+                        <!-- Item 1 -->
+                        <div class="group cursor-pointer fade-up" onclick="window.open('https://studio.movio.id/', '_blank')">
+                            <div class="w-full aspect-square overflow-hidden bg-[#0A192F] relative mb-4">
+                                <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.8] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0">
+                                <div class="absolute inset-0 border-4 border-transparent group-hover:border-[#F97316] transition-colors"></div>
+                            </div>
+                            <h4 class="text-xl font-black text-[#1E3A8A] tracking-tight uppercase group-hover:text-[#F97316] transition-colors">Corporate Doc</h4>
+                            <p class="text-slate-500 font-bold tracking-widest text-[10px] uppercase">Video Syuting</p>
+                        </div>
+                        
+                        <!-- Item 2 -->
+                        <div class="group cursor-pointer fade-up delay-100" onclick="window.open('https://studio.movio.id/', '_blank')">
+                            <div class="w-full aspect-square overflow-hidden bg-[#0A192F] relative mb-4">
+                                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.8] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0">
+                                <div class="absolute inset-0 border-4 border-transparent group-hover:border-[#F97316] transition-colors"></div>
+                            </div>
+                            <h4 class="text-xl font-black text-[#1E3A8A] tracking-tight uppercase group-hover:text-[#F97316] transition-colors">Safety Induction</h4>
+                            <p class="text-slate-500 font-bold tracking-widest text-[10px] uppercase">E-Learning SCORM</p>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="group cursor-pointer fade-up delay-200" onclick="window.open('https://studio.movio.id/', '_blank')">
+                            <div class="w-full aspect-square overflow-hidden bg-[#0A192F] relative mb-4">
+                                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover filter brightness-[0.8] group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0">
+                                <div class="absolute inset-0 border-4 border-transparent group-hover:border-[#F97316] transition-colors"></div>
+                            </div>
+                            <h4 class="text-xl font-black text-[#1E3A8A] tracking-tight uppercase group-hover:text-[#F97316] transition-colors">Brand Campaign</h4>
+                            <p class="text-slate-500 font-bold tracking-widest text-[10px] uppercase">Animasi Motion</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==============================================
+             PAGE 6: CONTACT
+        =============================================== -->
+        <div id="page-contact" class="page-section hidden pt-40 md:pt-48 pb-24 px-6 md:px-12 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-20 fade-up border-b-8 border-[#1E3A8A] pb-10">
+                    <span class="label-tegas text-[#F97316] mb-6 block">Siap Bekerja Sama?</span>
+                    <h1 class="text-[4rem] md:text-[6rem] font-black text-[#1E3A8A] tracking-tighter leading-[0.9] uppercase max-w-4xl">
+                        Mari <span class="text-outline-dark">Diskusikan</span> Project Anda.
+                    </h1>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 fade-up delay-100">
+                    <!-- Form Section -->
+                    <div class="lg:col-span-7 bg-[#F0F4F8] p-10 md:p-14 border-t-8 border-[#1E3A8A]">
+                        <form class="space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-3">
+                                    <label class="text-xs font-black uppercase tracking-widest text-[#1E3A8A]">Nama Lengkap</label>
+                                    <input type="text" placeholder="John Doe" class="w-full bg-white border-2 border-transparent px-4 py-4 focus:outline-none focus:border-[#F97316] transition-all cursor-text font-bold text-[#1E3A8A]">
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="text-xs font-black uppercase tracking-widest text-[#1E3A8A]">Perusahaan</label>
+                                    <input type="text" placeholder="PT Contoh Maju" class="w-full bg-white border-2 border-transparent px-4 py-4 focus:outline-none focus:border-[#F97316] transition-all cursor-text font-bold text-[#1E3A8A]">
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-xs font-black uppercase tracking-widest text-[#1E3A8A]">Email Bisnis</label>
+                                <input type="email" placeholder="john@perusahaan.com" class="w-full bg-white border-2 border-transparent px-4 py-4 focus:outline-none focus:border-[#F97316] transition-all cursor-text font-bold text-[#1E3A8A]">
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-xs font-black uppercase tracking-widest text-[#1E3A8A]">Brief / Kebutuhan</label>
+                                <textarea rows="4" placeholder="Ceritakan singkat kebutuhan Anda..." class="w-full bg-white border-2 border-transparent px-4 py-4 focus:outline-none focus:border-[#F97316] transition-all cursor-text resize-none font-bold text-[#1E3A8A]"></textarea>
+                            </div>
+                            <button type="button" class="w-full bg-[#1E3A8A] text-white font-black uppercase tracking-widest text-sm py-5 hover:bg-[#F97316] transition-colors cursor-pointer">
+                                Kirim Request Meeting
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Address Section -->
+                    <div class="lg:col-span-5 flex flex-col justify-center gap-12">
+                        <div>
+                            <h3 class="font-black text-2xl tracking-tight mb-4 text-[#1E3A8A] uppercase">Head Office</h3>
+                            <p class="font-semibold text-slate-600 leading-relaxed border-l-4 border-[#F97316] pl-4">Jalan Haji Rean No.56 RT.007 RW.005,<br> Benda Baru, Pamulang, Tangerang Selatan,<br> Banten, 15418, Indonesia.</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-black text-2xl tracking-tight mb-4 text-[#1E3A8A] uppercase">Operasional Office</h3>
+                            <p class="font-semibold text-slate-600 leading-relaxed border-l-4 border-[#F97316] pl-4">Solo Techno Park, Jl. Ki Hajar Dewantara No. 19,<br> Kentingan, Kec. Jebres, Kota Surakarta,<br> Jawa Tengah 57126.</p>
+                        </div>
+
+                        <div class="bg-[#F97316] p-8 text-white mt-4 shadow-xl shadow-orange-500/20">
+                            <h3 class="font-black text-sm tracking-widest uppercase mb-2">Hubungi Langsung</h3>
+                            <p class="text-3xl font-black">+62 21 746 38 350</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER GLOBAL -->
+    <footer class="bg-[#0A192F] pt-24 pb-10 px-6 md:px-12 text-white border-t-8 border-[#F97316] mt-auto z-50 relative">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs font-bold tracking-widest uppercase text-blue-200/50 gap-8">
+            <div class="font-black text-4xl tracking-tighter text-white normal-case">
+                Movio<span class="text-[#F97316]">.</span>
+            </div>
+            <p>&copy; 2024 Movio Studio. Professional Partner.</p>
+            <div class="flex gap-8">
+                <a href="#" class="hover:text-[#F97316] transition-colors cursor-pointer">Instagram</a>
+                <a href="#" class="hover:text-[#F97316] transition-colors cursor-pointer">LinkedIn</a>
+                <a href="#" class="hover:text-[#F97316] transition-colors cursor-pointer">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logika Interaktif (Vanilla JS) -->
+    <script>
+        lucide.createIcons();
+
+        // SINGLE PAGE ROUTING LOGIC
+        const navLinks = document.querySelectorAll('.nav-link, .nav-link-mobile');
+        const navTriggers = document.querySelectorAll('.nav-trigger'); 
+        const pages = document.querySelectorAll('.page-section');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        let menuOpen = false;
+
+        function updateNavbarStyle(targetId) {
+            const navbar = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            const links = document.querySelectorAll('#nav-links-container .nav-link');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            // Home, Portfolio, & About are Dark Backgrounds (#0A192F) -> Needs White Text
+            if(targetId === 'home' || targetId === 'portfolio' || targetId === 'about') {
+                logo.classList.replace('text-[#1E3A8A]', 'text-white');
+                menuBtn.classList.replace('text-[#1E3A8A]', 'text-white');
+                links.forEach(l => {
+                    l.classList.add('text-white');
+                    l.classList.remove('text-[#1E3A8A]', 'text-slate-500');
+                });
+            } else { 
+                // Solusi, Servis, Contact are White/Light Backgrounds -> Needs Corporate Blue Text (#1E3A8A)
+                logo.classList.replace('text-white', 'text-[#1E3A8A]');
+                menuBtn.classList.replace('text-white', 'text-[#1E3A8A]');
+                links.forEach(l => {
+                    l.classList.remove('text-white');
+                    l.classList.add('text-[#1E3A8A]');
+                });
+            }
+        }
+
+        function navigateTo(targetId) {
+            navLinks.forEach(link => {
+                if(link.classList.contains('nav-link')) {
+                    if (link.getAttribute('data-target') === targetId) {
+                        link.classList.add('text-[#F97316]');
+                        link.style.opacity = '1';
+                    } else {
+                        link.classList.remove('text-[#F97316]');
+                        link.style.opacity = '0.5';
+                    }
+                }
+            });
+
+            navLinks.forEach(link => {
+                if(link.classList.contains('nav-link-mobile')) {
+                    if (link.getAttribute('data-target') === targetId) {
+                        link.classList.add('text-[#F97316]');
+                        link.classList.remove('text-white/50');
+                    } else {
+                        link.classList.remove('text-[#F97316]');
+                        link.classList.add('text-white/50');
+                    }
+                }
+            });
+
+            pages.forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('block');
+            });
+
+            const targetPage = document.getElementById('page-' + targetId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('block');
+                
+                updateNavbarStyle(targetId);
+
+                const animatedElements = targetPage.querySelectorAll('.fade-up');
+                animatedElements.forEach(el => el.classList.remove('in-view'));
+                
+                setTimeout(() => {
+                    animatedElements.forEach(el => observer.observe(el));
+                    if(targetId === 'portfolio') handleScrollAnim(); 
+                }, 50);
+            }
+
+            if (menuOpen) {
+                mobileMenu.classList.add('-translate-y-full');
+                menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+                lucide.createIcons();
+                menuOpen = false;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        [...navLinks, ...navTriggers].forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-target');
+                if(target) navigateTo(target);
+            });
+        });
+
+        // CUSTOM CURSOR
+        const cursor = document.getElementById('custom-cursor');
+        const cursorInner = document.getElementById('cursor-inner');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+
+        document.addEventListener('mouseover', (e) => {
+            const isClickable = e.target.closest('a') || e.target.closest('button') || e.target.classList.contains('cursor-pointer') || e.target.closest('.cursor-pointer');
+            if (isClickable) {
+                cursor.style.width = '64px';
+                cursor.style.height = '64px';
+                cursor.style.marginLeft = '-32px';
+                cursor.style.marginTop = '-32px';
+                cursorInner.classList.replace('border-[2px]', 'border-[1px]');
+                cursorInner.classList.add('bg-opacity-10', 'backdrop-blur-sm');
+                cursorInner.classList.remove('bg-opacity-100');
+            } else {
+                cursor.style.width = '16px';
+                cursor.style.height = '16px';
+                cursor.style.marginLeft = '-8px';
+                cursor.style.marginTop = '-8px';
+                cursorInner.classList.replace('border-[1px]', 'border-[2px]');
+                cursorInner.classList.remove('bg-opacity-10', 'backdrop-blur-sm');
+                cursorInner.classList.add('bg-opacity-100');
+            }
+        });
+
+        // NAVBAR SCROLL BACKGROUND
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('bg-[#0A192F]/90', 'backdrop-blur-xl', 'py-5', 'border-blue-400/20');
+                navbar.classList.remove('bg-transparent', 'py-8', 'border-transparent');
+                
+                // Force text white when scrolled (since bg is dark navy)
+                document.getElementById('nav-logo').classList.replace('text-[#1E3A8A]', 'text-white');
+                document.getElementById('mobile-menu-btn').classList.replace('text-[#1E3A8A]', 'text-white');
+                document.querySelectorAll('#nav-links-container .nav-link').forEach(l => {
+                    l.classList.add('text-white');
+                    l.classList.remove('text-[#1E3A8A]', 'text-slate-500');
+                });
+            } else {
+                navbar.classList.remove('bg-[#0A192F]/90', 'backdrop-blur-xl', 'py-5', 'border-blue-400/20');
+                navbar.classList.add('bg-transparent', 'py-8', 'border-transparent');
+                
+                // Revert to original based on current page
+                const activePage = document.querySelector('.page-section.block').id.replace('page-', '');
+                updateNavbarStyle(activePage);
+            }
+        });
+
+        // MOBILE MENU TOGGLE
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('-translate-y-full');
+                menuBtn.innerHTML = '<i data-lucide="x" class="text-white"></i>';
+            } else {
+                mobileMenu.classList.add('-translate-y-full');
+                const activePage = document.querySelector('.page-section.block').id.replace('page-', '');
+                const isDark = (activePage === 'home' || activePage === 'portfolio' || activePage === 'about' || window.scrollY > 20);
+                menuBtn.innerHTML = `<i data-lucide="menu" class="${isDark ? 'text-white' : 'text-[#1E3A8A]'}"></i>`;
+            }
+            lucide.createIcons();
+        });
+
+        // INTERSECTION OBSERVER (Fade Up)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Mulai observe elemen di halaman pertama (Home)
+        document.querySelectorAll('#page-home .fade-up').forEach(el => observer.observe(el));
+        updateNavbarStyle('home'); // Init color
+
+        // PORTFOLIO SCROLL ANIMATION (Numpuk -> Jejer)
+        const portfolioSection = document.getElementById('portfolio-anim-section');
+        const portTitle = document.getElementById('portfolio-title');
+        const portBtn = document.getElementById('portfolio-btn');
+        const portCards = document.querySelectorAll('.portfolio-card');
+        
+        let ticking = false;
+
+        const handleScrollAnim = () => {
+            if (!portfolioSection || document.getElementById('page-portfolio').classList.contains('hidden')) return;
+            
+            const rect = portfolioSection.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const totalScrollable = rect.height - windowHeight;
+            
+            let progress = -rect.top / totalScrollable;
+            progress = Math.max(0, Math.min(1, progress));
+
+            if (portTitle) {
+                portTitle.style.opacity = Math.max(0, 1 - progress * 4);
+                portTitle.style.transform = `translateY(${progress * -50}px) scale(${1 - progress * 0.05})`;
+            }
+
+            if (portBtn) {
+                const btnProg = Math.max(0, (progress - 0.8) * 5);
+                portBtn.style.opacity = btnProg;
+                portBtn.style.transform = `translateY(${(1 - btnProg) * 20}px)`;
+                portBtn.style.pointerEvents = btnProg > 0.5 ? 'auto' : 'none';
+            }
+
+            const isMobile = window.innerWidth < 768;
+            const spreadX = isMobile ? 0 : 105;
+            const spreadY = isMobile ? 105 : 0;
+
+            portCards.forEach((card, index) => {
+                let x = 0, y = 0, rot = 0, scale = 1;
+                if (index === 0) {
+                    x = isMobile ? 0 : -spreadX * progress;
+                    y = isMobile ? -spreadY * progress : 10 * progress;
+                    rot = -15 * (1 - progress) - (isMobile ? 0 : 4 * progress);
+                    scale = 1 - (0.05 * progress);
+                } else if (index === 1) {
+                    x = 0; y = -5 * progress; rot = 0; scale = 1 + (0.05 * progress);
+                } else if (index === 2) {
+                    x = isMobile ? 0 : spreadX * progress;
+                    y = isMobile ? spreadY * progress : 10 * progress;
+                    rot = 15 * (1 - progress) + (isMobile ? 0 : 4 * progress);
+                    scale = 1 - (0.05 * progress);
+                }
+                card.style.transform = `translate(-50%, -50%) translate(${x}%, ${y}%) rotate(${rot}deg) scale(${scale})`;
+            });
+        };
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    handleScrollAnim();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+        
+        window.addEventListener('resize', handleScrollAnim);
+    </script>
+</body>
+</html>
