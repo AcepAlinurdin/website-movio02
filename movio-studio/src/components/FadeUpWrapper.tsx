@@ -1,0 +1,39 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+
+interface FadeUpWrapperProps {
+  children: React.ReactNode;
+  className?: string;
+  delay?: 'delay-100' | 'delay-200' | 'delay-300' | 'delay-400' | 'delay-500';
+}
+
+export default function FadeUpWrapper({ children, className = '', delay }: FadeUpWrapperProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={`fade-up ${delay ?? ''} ${className}`}>
+      {children}
+    </div>
+  );
+}

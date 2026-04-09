@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  {/* Large Yellow Triangle (Middle/Left) */}
+  <path d="M92.2 144.1L304.5 328.7V144.1H92.2Z" fill="#FFB800"/>
+  {/* Red Triangle (Top Right) */}
+  <path d="M282.8 108.8H415.7L282.8 224.2V108.8Z" fill="#D64545"/>
+  {/* Navy Triangle (Bottom Left) */}
+  <path d="M198.5 252L282.8 398V252H198.5Z" fill="#004571"/>
+  {/* Black Circle (Bottom Right) */}
+  <circle cx="376.5" cy="363.5" r="28.3" fill="#221F1F"/>
+</svg>
